@@ -186,3 +186,23 @@ SELECT g.nazwa, COUNT(p.idGry) AS "ilosc_kupionych" FROM Gry g INNER JOIN Pozycj
 GO
 SELECT CASE WHEN ilosc_kupionych >20 THEN 'TAK' ELSE 'NIE' END AS 'Czy wysoka sprzedaż', *
 FROM ilosc_kupionych;
+
+--Widok który wyświetla WSZYSTKIE dane na temat gry, oraz wyświetla te gry których cena jest mniejsza bądź równa 100zł
+--SELECT CASE który podaje wartość TAK gdy dana gra ma coś wspólnego z firmą 'Square Enix' (dla małej ilości rekordów nie ma to sensu, lecz gdyby była ich ogromna ilość...)
+CREATE VIEW dane_gier AS
+SELECT g.nazwa, ga.gatunek, p.Nazwa AS "platforma", g.rok_wydania, g.cena_netto, pr.nazwa AS "producent", w.wydawca
+FROM Gry g 
+INNER JOIN Wiele_Gatunkow wg ON g.idGry = wg.idGry 
+INNER JOIN Gatunek ga ON wg.idGatunek = ga.idGatunek 
+INNER JOIN Wiele_Platform wp ON wp.idGry = g.idGry
+INNER JOIN Platforma p ON p.idPlatforma = wp.idPlatforma
+INNER JOIN Wydawca w ON w.idWydawca = g.idWydawca
+INNER JOIN Producent pr ON pr.idProducent = g.idProducent
+GROUP BY g.nazwa, g.cena_netto, ga.gatunek, g.rok_wydania, p.Nazwa, pr.nazwa, w.wydawca
+HAVING g.cena_netto<=100
+
+GO
+
+SELECT CASE WHEN producent ='Square Enix' OR Wydawca ='Square Enix' THEN 'TAK' ELSE 'NIE' END
+ AS 'Czy Square-Enix ma coś wspólnego', *   
+FROM dane_gier;
