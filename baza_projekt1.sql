@@ -179,3 +179,10 @@ SELECT kl.imie, kl.nazwiko, w.rodzaj_wysylki FROM Wysylka w INNER JOIN Koszyk k 
 SELECT k.imie, k.nazwiko, a.kod, a.miasto, a.nr_domu, a.ulica FROM Adres a INNER JOIN Klient k ON a.idAdres = k.idAdres ORDER BY k.nazwiko;
 
 
+--Widok który pokazuje ilość kupionych gier, nie wliczając w to gier które nie zostały zakupione ani razu
+--SELECT + CASE sprawdza czy dana gra posiada wysoką sprzedaż (np. >20)
+CREATE VIEW ilosc_kupionych AS
+SELECT g.nazwa, COUNT(p.idGry) AS "ilosc_kupionych" FROM Gry g INNER JOIN Pozycje p ON g.idGry = p.idGry GROUP BY g.nazwa HAVING COUNT(p.idGry)>0
+GO
+SELECT CASE WHEN ilosc_kupionych >20 THEN 'TAK' ELSE 'NIE' END AS 'Czy wysoka sprzedaż', *
+FROM ilosc_kupionych;
