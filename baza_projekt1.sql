@@ -175,8 +175,8 @@ INSERT INTO Pozycje VALUES (3,5);
 SELECT g.nazwa, ga.gatunek FROM Gry g INNER JOIN Wiele_Gatunkow wg ON g.idGry = wg.idGry INNER JOIN Gatunek ga  ON wg.idGatunek = ga.idGatunek ORDER BY g.nazwa;
 SELECT g.nazwa, g.cena_netto, p.Nazwa AS 'Platforma', pr.nazwa AS 'Producent' FROM Gry g INNER JOIN Wiele_Platform wp ON g.idGry = wp.idGry INNER JOIN Platforma p ON p.idPlatforma = wp.idPlatforma INNER JOIN Producent pr ON g.idProducent = pr.idProducent ORDER BY g.nazwa;
 SELECT g.nazwa, COUNT(p.idGry) AS 'Ilosc Kupionych' FROM Gry g INNER JOIN Pozycje p ON g.idGry = p.idGry GROUP BY g.nazwa;
-SELECT kl.imie, kl.nazwiko, w.rodzaj_wysylki FROM Wysylka w INNER JOIN Koszyk k ON w.idWysylka = k.idWysylka INNER JOIN Klient kl ON k.idKlient = kl.idKlient;
-SELECT k.imie, k.nazwiko, a.kod, a.miasto, a.nr_domu, a.ulica FROM Adres a INNER JOIN Klient k ON a.idAdres = k.idAdres ORDER BY k.nazwiko;
+SELECT kl.imie, kl.nazwisko, w.rodzaj_wysylki FROM Wysylka w INNER JOIN Koszyk k ON w.idWysylka = k.idWysylka INNER JOIN Klient kl ON k.idKlient = kl.idKlient;
+SELECT k.imie, k.nazwisko, a.kod, a.miasto, a.nr_domu, a.ulica FROM Adres a INNER JOIN Klient k ON a.idAdres = k.idAdres ORDER BY k.nazwisko;
 
 
 --Widok który pokazuje ilość kupionych gier, nie wliczając w to gier które nie zostały zakupione ani razu
