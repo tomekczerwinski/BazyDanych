@@ -37,7 +37,7 @@ CREATE TABLE Klient (
   idKlient INT IDENTITY(1,1) PRIMARY KEY,
   idAdres INT CONSTRAINT idAdres_fk_k FOREIGN KEY(idAdres) REFERENCES Adres(idAdres) NOT NULL,
   imie VARCHAR(15) NOT NULL,
-  nazwiko VARCHAR(30) NOT NULL,
+  nazwisko VARCHAR(30) NOT NULL,
   NIP CHAR(10) UNIQUE,
   PESEL CHAR(9) UNIQUE,
 );
@@ -228,3 +228,25 @@ RETURN(SELECT COUNT(*) FROM Gry WHERE rok_wydania BETWEEN @data_od AND @date_do)
 END;
 GO
 SELECT dbo.ile_gierwroku('2010','2011') AS 'wynik';
+
+
+--Funkcja która wyświetli raport rządanej gry(po idGry). Wyświetli sprzedawce oraz kupującego daną grę.
+CREATE FUNCTION dbo.raport_kupna(@id_szuk_gry INT)
+RETURNS @raport TABLE
+(Klient VARCHAR(50) NULL, Sprzedawca VARCHAR(50) NULL,
+ Gry VARCHAR(30) NULL)
+ AS
+ BEGIN
+  INSERT @raport(Klient, Sprzedawca, Gry)
+	SELECT k.imie+' '+k.nazwisko, s.imie+' '+s.nazwisko,
+	g.nazwa
+	FROM Klient k
+	JOIN Koszyk ko ON k.idKlient=ko.idKlient 
+	JOIN Pozycje p ON p.idKoszyk=ko.idKoszyk
+	JOIN Sprzedawca s ON s.idSprzedawca=ko.idSprzedawca
+	JOIN Gry g ON g.idGry=p.idGry
+	WHERE g.idGry=@id_szuk_gry
+	RETURN
+END;
+GO
+SELECT * FROM dbo.raport_kupna(3);
