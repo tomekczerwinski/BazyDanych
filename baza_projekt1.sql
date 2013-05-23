@@ -206,3 +206,17 @@ GO
 SELECT CASE WHEN producent ='Square Enix' OR Wydawca ='Square Enix' THEN 'TAK' ELSE 'NIE' END
  AS 'Czy Square-Enix ma coś wspólnego', *   
 FROM dane_gier;
+
+
+--Funkcja aktywność klienta, która umożliwa nam sprawdzenie ilu transkacji dokonał dany klient (po numerze id)
+CREATE FUNCTION dbo.aktywnosc_klienta(
+@id_klient INT
+) RETURNS INT
+BEGIN
+RETURN (SELECT COUNT(*) FROM Klient k 
+INNER JOIN Koszyk ko ON k.idKlient=ko.idKlient 
+INNER JOIN Pozycje p ON p.idKoszyk=ko.idKoszyk
+WHERE k.idKlient=@id_klient)
+END;
+GO
+SELECT dbo.aktywnosc_klienta(1) AS ile_transakcji;
