@@ -220,3 +220,11 @@ WHERE k.idKlient=@id_klient)
 END;
 GO
 SELECT dbo.aktywnosc_klienta(1) AS ile_transakcji;
+
+--Funkcja która po wpisaniu daty od do wyświetli nam ile gier powstało w danym przedziale lat.
+CREATE FUNCTION dbo.ile_gierwroku (@data_od DATE, @date_do DATE) RETURNS INT
+BEGIN
+RETURN(SELECT COUNT(*) FROM Gry WHERE rok_wydania BETWEEN @data_od AND @date_do)
+END;
+GO
+SELECT dbo.ile_gierwroku('2010','2011') AS 'wynik';
