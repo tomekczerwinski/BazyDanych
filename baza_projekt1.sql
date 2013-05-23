@@ -265,3 +265,18 @@ INSERT INTO klient VALUES (@idAdres, @imie, @nazwisko, @NIP, @PESEL);
 GO
 
 EXECUTE dodaj_klienta 4, 'Kacper', 'Zamrzycki', '2345323567', '111231222';
+
+--Procerua zwiększania ceny gier
+--Dlaczego nietrywialne: To bardzo przydatna procedura która umożliwa nam zwiększenie cen KILKU gier naraz (poprzez wywołanie, które ma wbudowaną pętle od do)
+CREATE PROCEDURE zwieksz_cene @idGry INT, @kwota MONEY
+AS
+UPDATE Gry SET cena_netto=cena_netto+@kwota WHERE idGry=@idGry;
+GO
+
+DECLARE @i INT
+SET @i = 0
+WHILE @i < 4
+    BEGIN
+      SET @i += 1
+      EXECUTE zwieksz_cene @i, 10
+    END;
