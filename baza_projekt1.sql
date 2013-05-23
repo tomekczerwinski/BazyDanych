@@ -181,6 +181,7 @@ SELECT k.imie, k.nazwiko, a.kod, a.miasto, a.nr_domu, a.ulica FROM Adres a INNER
 
 --Widok który pokazuje ilość kupionych gier, nie wliczając w to gier które nie zostały zakupione ani razu
 --SELECT + CASE sprawdza czy dana gra posiada wysoką sprzedaż (np. >20)
+--Dlaczego nietrywialne: jest to bardzo przydadny widok, gdyż warto wiedzieć jak sprzedaje sie dany produkt + automatyczna informacja na temat wysokiej sprzedaży.
 CREATE VIEW ilosc_kupionych AS
 SELECT g.nazwa, COUNT(p.idGry) AS "ilosc_kupionych" FROM Gry g INNER JOIN Pozycje p ON g.idGry = p.idGry GROUP BY g.nazwa HAVING COUNT(p.idGry)>0
 GO
@@ -189,6 +190,7 @@ FROM ilosc_kupionych;
 
 --Widok który wyświetla WSZYSTKIE dane na temat gry, oraz wyświetla te gry których cena jest mniejsza bądź równa 100zł
 --SELECT CASE który podaje wartość TAK gdy dana gra ma coś wspólnego z firmą 'Square Enix' (dla małej ilości rekordów nie ma to sensu, lecz gdyby była ich ogromna ilość...)
+--Dlaczego nietrywialne: Każda szanujaca sie firma musi posiadac "raport" tego czego posiada. + CASE który może byc przydatny dla klienta (zyczy sobie gier jednego wydawcy)
 CREATE VIEW dane_gier AS
 SELECT g.nazwa, ga.gatunek, p.Nazwa AS "platforma", g.rok_wydania, g.cena_netto, pr.nazwa AS "producent", w.wydawca
 FROM Gry g 
@@ -209,6 +211,7 @@ FROM dane_gier;
 
 
 --Funkcja aktywność klienta, która umożliwa nam sprawdzenie ilu transkacji dokonał dany klient (po numerze id)
+--Dlaczego nietrywialne: Funkcja pokazuje nam jak aktywny jest dany klient. Pozwala nam to na sledzenie jego zakupow i w ten sposob mozna zdecydowac czy zasluguje na wiecej promocji.
 CREATE FUNCTION dbo.aktywnosc_klienta(
 @id_klient INT
 ) RETURNS INT
@@ -222,6 +225,7 @@ GO
 SELECT dbo.aktywnosc_klienta(1) AS ile_transakcji;
 
 --Funkcja która po wpisaniu daty od do wyświetli nam ile gier powstało w danym przedziale lat.
+--Dlaczego nietrywialne: Moze zostac uzyte do formularza, danego klienta moze interesowac przedial lat w ktorym zostaly wyprodukowane gry i tym samym zdecydowac o kupnie.
 CREATE FUNCTION dbo.ile_gierwroku (@data_od DATE, @date_do DATE) RETURNS INT
 BEGIN
 RETURN(SELECT COUNT(*) FROM Gry WHERE rok_wydania BETWEEN @data_od AND @date_do)
@@ -231,6 +235,7 @@ SELECT dbo.ile_gierwroku('2010','2011') AS 'wynik';
 
 
 --Funkcja która wyświetli raport rządanej gry(po idGry). Wyświetli sprzedawce oraz kupującego daną grę.
+--Dlaczego nietrywialne: Raport DANEJ GRY to bardzo przydana rzecz. Pozwala to na obserwowanie czy dany produkt dobrze sie sprzedaje i przy okazji zostana wyswietleni klienci oraz sprzedawcy.
 CREATE FUNCTION dbo.raport_kupna(@id_szuk_gry INT)
 RETURNS @raport TABLE
 (Klient VARCHAR(50) NULL, Sprzedawca VARCHAR(50) NULL,
