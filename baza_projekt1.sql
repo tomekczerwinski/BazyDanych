@@ -288,3 +288,13 @@ AS
 UPDATE Pozycje SET idKoszyk=@idKoszyk, idGry=@idGry  WHERE idKoszyk=@idKoszyk;
 GO
 EXECUTE zmiana_zamowienia 3,2;
+
+
+--Procedura wypisująca gry po nazwie producenta
+--Dlaczego nietrywialne: Mogłoby to posłużyć jako część formularza, w którym podaje się nazwe producenta a ten wyszukuje i wypisuje wszystko co znajdzie związanego z tym właśnie producentem
+CREATE PROCEDURE wypisz_gry @producent VARCHAR(20)
+AS
+SELECT * FROM Gry g JOIN Producent p ON p.idProducent=g.idProducent
+WHERE p.nazwa=@producent;
+GO
+EXECUTE wypisz_gry 'Square Enix';
