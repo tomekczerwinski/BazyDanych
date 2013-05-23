@@ -280,3 +280,11 @@ WHILE @i < 4
       SET @i += 1
       EXECUTE zwieksz_cene @i, 10
     END;
+
+--Procedura zmiana zamowienia
+--Dlaczego nietrywialne: Zmiana zamówiania umożliwa nam zmienić zamówienie klienta, przykładowo: klient wybrał złą grę - w takim wypadku w wywołaniu podajemu numer klienta (koszyk, idkoszyk) i zmieniamy dla niego idGry.
+CREATE PROCEDURE zmiana_zamowienia @idGry INT, @idKoszyk INT
+AS
+UPDATE Pozycje SET idKoszyk=@idKoszyk, idGry=@idGry  WHERE idKoszyk=@idKoszyk;
+GO
+EXECUTE zmiana_zamowienia 3,2;
