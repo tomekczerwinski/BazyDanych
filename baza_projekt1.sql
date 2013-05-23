@@ -255,3 +255,13 @@ RETURNS @raport TABLE
 END;
 GO
 SELECT * FROM dbo.raport_kupna(3);
+
+--Procedura dodanie klienta.
+--Dlaczego nietrywialne: Użytkownik bazy musi w łatwy i efektywny sposób dodawać klientów. Ma to na celu ułatwienie mu pracy
+CREATE PROCEDURE dodaj_klienta
+@idAdres INT, @imie VARCHAR(15), @nazwisko VARCHAR(20), @NIP CHAR(10),@PESEL CHAR(9)
+AS
+INSERT INTO klient VALUES (@idAdres, @imie, @nazwisko, @NIP, @PESEL);
+GO
+
+EXECUTE dodaj_klienta 4, 'Kacper', 'Zamrzycki', '2345323567', '111231222';
