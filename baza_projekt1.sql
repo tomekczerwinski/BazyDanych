@@ -345,3 +345,29 @@ BEGIN
 GO
 		
 DELETE FROM Pozycje WHERE idKoszyk=3;
+
+
+
+
+--Wyzwalacz który po zmianie ceny gry zaktualizuje ją wszędzie gdzie to konieczne
+--Dlaczego nietrywialne: Automatyczna zmiana cena każdego zamówienia po zmianie ceny danego towaru to bardzo użyteczna rzecz
+CREATE TRIGGER akt_cene ON Gry
+AFTER UPDATE AS
+BEGIN
+	DECLARE @cena MONEY
+	DECLARE @id INT
+	DECLARE @il INT
+	DECLARE @vat INT
+	DECLARE @wys MONEY
+	SELECT @vat=ko.stawka_vat FROM INSERTED i JOIN Pozycje p ON i.idGry=p.idGry JOIN Koszyk ko ON ko.idKoszyk=p.idKoszyk
+	SELECT @id=ko.idKoszyk FROM INSERTED i JOIN Pozycje p ON i.idGry=p.idGry JOIN Koszyk ko ON ko.idKoszyk=p.idKoszyk
+	SELECT @wys=w.cena_netto FROM INSERTED i JOIN Pozycje p ON i.idGry=p.idGry JOIN 
+	Koszyk ko ON ko.idKoszyk=p.idKoszyk JOIN Wysylka w ON w.idWysylka=ko.idWysylka
+	SELECT @cena=cena_netto FROM INSERTED
+	SELECT @il=ko.ilosc_razem FROM INSERTED i JOIN Pozycje p ON i.idGry=p.idGry JOIN Koszyk ko ON ko.idKoszyk=p.idKoszyk
+	UPDATE Koszyk SET cena_razem_netto = @wys + @cena WHERE @id=idKoszyk
+	UPDATE Koszyk SET cena_razem_brutto =  @il * (0.01 * @vat * cena_razem_netto)+cena_razem_netto  WHERE @id=idKoszyk
+END
+GO
+
+UPDATE Gry SET cena_netto = '76' WHERE idGry=1;
