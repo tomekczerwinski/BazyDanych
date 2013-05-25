@@ -298,3 +298,19 @@ SELECT * FROM Gry g JOIN Producent p ON p.idProducent=g.idProducent
 WHERE p.nazwa=@producent;
 GO
 EXECUTE wypisz_gry 'Square Enix';
+
+--Wyzwalacz który wyzwala się gdy Modyfikujemy tabele Klient
+--Dlaczego nietrywialne: To bardzo pomocny wyzwalacz, który informuje nas o poprawności operacji jakie możemy ewentualnie wykonywać na tabeli Klient.
+CREATE TRIGGER modyfikacja ON Klient
+AFTER INSERT, UPDATE, DELETE
+AS BEGIN
+	SELECT 'Liczba zmodyfikowanych wierszy: ' + STR(@@ROWCOUNT)
+	SELECT 'Wiersze usunięte: '
+	SELECT * FROM DELETED
+	SELECT 'Wiersze dodane: '
+	SELECT * FROM INSERTED
+END
+GO
+
+UPDATE Klient SET imie='Maciek'
+WHERE idKlient=1;
