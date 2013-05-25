@@ -314,3 +314,34 @@ GO
 
 UPDATE Klient SET imie='Maciek'
 WHERE idKlient=1;
+
+
+--Wyzwalacz który po usunięciu z tabeli "Pozycje" usunie również zamówienie z Tabeli "Koszyk"
+--Dlaczego nietrywialne: Usunięcie Pozycji spowoduje automatycznie usunięcie zamówienia z koszyka + informacja na temat czyje to było zamówienie
+CREATE TRIGGER usun_zam ON Pozycje
+AFTER DELETE AS
+BEGIN
+	DECLARE kursor_deleted CURSOR
+	FOR SELECT k.imie, k.nazwisko FROM DELETED i JOIN Koszyk ko ON i.idKoszyk=ko.idKoszyk JOIN Klient k
+	ON k.idKlient=ko.idKlient ;
+	OPEN kursor_deleted
+	DECLARE @imie varchar(15), @nazwisko varchar(15)
+	FETCH NEXT FROM kursor_deleted INTO @imie, @nazwisko
+	WHILE @@FETCH_STATUS = 0
+	
+	BEGIN
+	PRINT 'Usunięto zamówienie: ' +@imie+' '+@nazwisko
+	FETCH NEXT FROM kursor_deleted INTO @imie, @nazwisko
+	END
+	CLOSE kursor_deleted
+	DEALLOCATE kursor_deleted
+	END
+	
+
+	DELETE  FROM Koszyk
+	WHERE idKoszyk IN
+		(SELECT idKoszyk FROM DELETED)
+		
+GO
+		
+DELETE FROM Pozycje WHERE idKoszyk=3;
