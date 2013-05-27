@@ -371,3 +371,35 @@ END
 GO
 
 UPDATE Gry SET cena_netto = '76' WHERE idGry=1;
+
+
+--Trigger który sprawdza czy istnieje adres podczas dodawania nowego i jeżeli istnieje to nie doda tego nowego
+--Notka: SQL informuje że wiersze zostają zmienione, lecz tak na prawdę adres nie zostaje dodany.
+CREATE TRIGGER duplikat_adresu ON Adres
+INSTEAD OF INSERT
+AS
+BEGIN
+	DECLARE @cena MONEY
+	DECLARE @ul VARCHAR(40)
+	DECLARE @nr VARCHAR(5)
+	DECLARE @kod VARCHAR(10)
+	DECLARE @mias VARCHAR(20)
+	SELECT @ul=ulica FROM INSERTED
+	SELECT @nr=nr_domu FROM INSERTED
+	SELECT @kod=kod FROM INSERTED
+	SELECT @mias=miasto FROM INSERTED
+	
+	SET NOCOUNT ON
+	IF NOT EXISTS 
+	(SELECT *
+	FROM Adres a, INSERTED i
+	WHERE (a.ulica=i.ulica) AND (a.nr_domu=i.nr_domu) AND (a.kod=i.kod) AND (a.miasto=i.miasto))
+	BEGIN
+	INSERT INTO adres VALUES (@ul, @nr, @kod, @mias);
+	END
+	ELSE
+	RAISERROR('JUŻ ISTNIEJE TAKI ADRES!',1,2)	
+END
+GO
+
+INSERT INTO Adres VALUES ('Długa','5','43-111','Bydgoszcz');
