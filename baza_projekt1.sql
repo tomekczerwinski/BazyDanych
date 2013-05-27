@@ -178,7 +178,7 @@ SELECT g.nazwa, COUNT(p.idGry) AS 'Ilosc Kupionych' FROM Gry g INNER JOIN Pozycj
 SELECT kl.imie, kl.nazwisko, w.rodzaj_wysylki FROM Wysylka w INNER JOIN Koszyk k ON w.idWysylka = k.idWysylka INNER JOIN Klient kl ON k.idKlient = kl.idKlient;
 SELECT k.imie, k.nazwisko, a.kod, a.miasto, a.nr_domu, a.ulica FROM Adres a INNER JOIN Klient k ON a.idAdres = k.idAdres ORDER BY k.nazwisko;
 
-
+--1) widok 1
 --Widok który pokazuje ilość kupionych gier, nie wliczając w to gier które nie zostały zakupione ani razu
 --SELECT + CASE sprawdza czy dana gra posiada wysoką sprzedaż (np. >20)
 --Dlaczego nietrywialne: jest to bardzo przydadny widok, gdyż warto wiedzieć jak sprzedaje sie dany produkt + automatyczna informacja na temat wysokiej sprzedaży.
@@ -188,6 +188,7 @@ GO
 SELECT CASE WHEN ilosc_kupionych >20 THEN 'TAK' ELSE 'NIE' END AS 'Czy wysoka sprzedaż', *
 FROM ilosc_kupionych;
 
+--2) widok 2
 --Widok który wyświetla WSZYSTKIE dane na temat gry, oraz wyświetla te gry których cena jest mniejsza bądź równa 100zł
 --SELECT CASE który podaje wartość TAK gdy dana gra ma coś wspólnego z firmą 'Square Enix' (dla małej ilości rekordów nie ma to sensu, lecz gdyby była ich ogromna ilość...)
 --Dlaczego nietrywialne: Każda szanujaca sie firma musi posiadac "raport" tego czego posiada. + CASE który może byc przydatny dla klienta (zyczy sobie gier jednego wydawcy)
@@ -209,7 +210,7 @@ SELECT CASE WHEN producent ='Square Enix' OR Wydawca ='Square Enix' THEN 'TAK' E
  AS 'Czy Square-Enix ma coś wspólnego', *   
 FROM dane_gier;
 
-
+--3) funkcja 1
 --Funkcja aktywność klienta, która umożliwa nam sprawdzenie ilu transkacji dokonał dany klient (po numerze id)
 --Dlaczego nietrywialne: Funkcja pokazuje nam jak aktywny jest dany klient. Pozwala nam to na sledzenie jego zakupow i w ten sposob mozna zdecydowac czy zasluguje na wiecej promocji.
 CREATE FUNCTION dbo.aktywnosc_klienta(
@@ -224,6 +225,7 @@ END;
 GO
 SELECT dbo.aktywnosc_klienta(1) AS ile_transakcji;
 
+--4) funkcja 2
 --Funkcja która po wpisaniu daty od do wyświetli nam ile gier powstało w danym przedziale lat.
 --Dlaczego nietrywialne: Moze zostac uzyte do formularza, danego klienta moze interesowac przedial lat w ktorym zostaly wyprodukowane gry i tym samym zdecydowac o kupnie.
 CREATE FUNCTION dbo.ile_gierwroku (@data_od DATE, @date_do DATE) RETURNS INT
@@ -233,7 +235,7 @@ END;
 GO
 SELECT dbo.ile_gierwroku('2010','2011') AS 'wynik';
 
-
+--5) funkcja 3
 --Funkcja która wyświetli raport rządanej gry(po idGry). Wyświetli sprzedawce oraz kupującego daną grę.
 --Dlaczego nietrywialne: Raport DANEJ GRY to bardzo przydana rzecz. Pozwala to na obserwowanie czy dany produkt dobrze sie sprzedaje i przy okazji zostana wyswietleni klienci oraz sprzedawcy.
 CREATE FUNCTION dbo.raport_kupna(@id_szuk_gry INT)
@@ -256,6 +258,10 @@ END;
 GO
 SELECT * FROM dbo.raport_kupna(3);
 
+--6) funkcja 4
+--brak
+
+--7) procedura 1
 --Procedura dodanie klienta.
 --Dlaczego nietrywialne: Użytkownik bazy musi w łatwy i efektywny sposób dodawać klientów. Ma to na celu ułatwienie mu pracy
 CREATE PROCEDURE dodaj_klienta
@@ -266,6 +272,7 @@ GO
 
 EXECUTE dodaj_klienta 4, 'Kacper', 'Zamrzycki', '2345323567', '111231222';
 
+--8) procedura 2
 --Procerua zwiększania ceny gier
 --Dlaczego nietrywialne: To bardzo przydatna procedura która umożliwa nam zwiększenie cen KILKU gier naraz (poprzez wywołanie, które ma wbudowaną pętle od do)
 CREATE PROCEDURE zwieksz_cene @idGry INT, @kwota MONEY
@@ -281,6 +288,7 @@ WHILE @i < 4
       EXECUTE zwieksz_cene @i, 10
     END;
 
+--9) procedura 3
 --Procedura zmiana zamowienia
 --Dlaczego nietrywialne: Zmiana zamówiania umożliwa nam zmienić zamówienie klienta, przykładowo: klient wybrał złą grę - w takim wypadku w wywołaniu podajemu numer klienta (koszyk, idkoszyk) i zmieniamy dla niego idGry.
 CREATE PROCEDURE zmiana_zamowienia @idGry INT, @idKoszyk INT
@@ -289,7 +297,7 @@ UPDATE Pozycje SET idKoszyk=@idKoszyk, idGry=@idGry  WHERE idKoszyk=@idKoszyk;
 GO
 EXECUTE zmiana_zamowienia 3,2;
 
-
+--10) procedura 4
 --Procedura wypisująca gry po nazwie producenta
 --Dlaczego nietrywialne: Mogłoby to posłużyć jako część formularza, w którym podaje się nazwe producenta a ten wyszukuje i wypisuje wszystko co znajdzie związanego z tym właśnie producentem
 CREATE PROCEDURE wypisz_gry @producent VARCHAR(20)
@@ -299,6 +307,7 @@ WHERE p.nazwa=@producent;
 GO
 EXECUTE wypisz_gry 'Square Enix';
 
+--11) wyzwalacz 1
 --Wyzwalacz który wyzwala się gdy Modyfikujemy tabele Klient
 --Dlaczego nietrywialne: To bardzo pomocny wyzwalacz, który informuje nas o poprawności operacji jakie możemy ewentualnie wykonywać na tabeli Klient.
 CREATE TRIGGER modyfikacja ON Klient
@@ -315,7 +324,7 @@ GO
 UPDATE Klient SET imie='Maciek'
 WHERE idKlient=1;
 
-
+--12) wyzwalacz 2
 --Wyzwalacz który po usunięciu z tabeli "Pozycje" usunie również zamówienie z Tabeli "Koszyk"
 --Dlaczego nietrywialne: Usunięcie Pozycji spowoduje automatycznie usunięcie zamówienia z koszyka + informacja na temat czyje to było zamówienie
 CREATE TRIGGER usun_zam ON Pozycje
@@ -348,7 +357,7 @@ DELETE FROM Pozycje WHERE idKoszyk=3;
 
 
 
-
+--13) wyzwalacz 3
 --Wyzwalacz który po zmianie ceny gry zaktualizuje ją wszędzie gdzie to konieczne
 --Dlaczego nietrywialne: Automatyczna zmiana cena każdego zamówienia po zmianie ceny danego towaru to bardzo użyteczna rzecz
 CREATE TRIGGER akt_cene ON Gry
@@ -372,7 +381,7 @@ GO
 
 UPDATE Gry SET cena_netto = '76' WHERE idGry=1;
 
-
+--13) wyzwalacz 4
 --Trigger który sprawdza czy istnieje adres podczas dodawania nowego i jeżeli istnieje to nie doda tego nowego
 --Notka: SQL informuje że wiersze zostają zmienione, lecz tak na prawdę adres nie zostaje dodany.
 CREATE TRIGGER powt_adres ON Adres
@@ -406,3 +415,10 @@ END
 GO
 
 INSERT INTO Adres VALUES ('Długa','5','43-111','Bydgoszcz');
+
+
+--15) pivot 1
+--brak
+
+--16) pivot 2
+--brak
