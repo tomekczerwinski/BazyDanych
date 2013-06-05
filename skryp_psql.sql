@@ -125,23 +125,23 @@ CREATE TABLE Pozycje (
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-INSERT INTO Adres VALUES (1,'Konopnicka','4E','23-980','Rzeszow');
-INSERT INTO Adres VALUES (2,'Sikorskiego','6E','53-940','Poznan');
-INSERT INTO Adres VALUES (3,'Batorego','9I','32-120','Bialystok');
-INSERT INTO Adres VALUES (4,'Długa','5','43-111','Bydgoszcz');
-INSERT INTO Adres VALUES (5,'Krotka','88','34-567','Swinoujscie');
+INSERT INTO Adres(ulica, nr_domu, kod, miasto) VALUES ('Konopnicka','4E','23-980','Rzeszow');
+INSERT INTO Adres(ulica, nr_domu, kod, miasto) VALUES ('Sikorskiego','6E','53-940','Poznan');
+INSERT INTO Adres(ulica, nr_domu, kod, miasto) VALUES ('Batorego','9I','32-120','Bialystok');
+INSERT INTO Adres(ulica, nr_domu, kod, miasto) VALUES ('Dluga','5','43-111','Bydgoszcz');
+INSERT INTO Adres(ulica, nr_domu, kod, miasto) VALUES ('Krotka','88','34-567','Swinoujscie');
 
-INSERT INTO Klient VALUES (1,1,'Tomasz','Czerwinski','1234576423','98787879');
-INSERT INTO Klient VALUES (2,1,'Rafal','Czerwinski','2345765323',NULL);
-INSERT INTO Klient VALUES (3,1,'Pawel','Czerwinski',NULL,'985456356');
-INSERT INTO Klient VALUES (4,2,'Zygmunt','Stary','1456735664','764321456');
-INSERT INTO Klient VALUES (5,3,'Stefan','Batory','4444534565','666654564');
+INSERT INTO Klient(idAdres, imie, nazwisko, nip, pesel) VALUES (1,'Tomasz','Czerwinski','1234576423','98787879');
+INSERT INTO Klient(idAdres, imie, nazwisko, nip, pesel) VALUES (1,'Rafal','Czerwinski','2345765323',NULL);
+INSERT INTO Klient(idAdres, imie, nazwisko, nip, pesel) VALUES (1,'Pawel','Czerwinski',NULL,'985456356');
+INSERT INTO Klient(idAdres, imie, nazwisko, nip, pesel) VALUES (2,'Zygmunt','Stary','1456735664','764321456');
+INSERT INTO Klient(idAdres, imie, nazwisko, nip, pesel) VALUES (3,'Stefan','Batory','4444534565','666654564');
 
-INSERT INTO Sprzedawca VALUES (1,3,'Zenek','Inny','4673976453');
-INSERT INTO Sprzedawca VALUES (2,4,'Franek','Znany','3456543425');
-INSERT INTO Sprzedawca VALUES (3,5,'Bronislawa','Panna','9999999876');
-INSERT INTO Sprzedawca VALUES (4,1,'Anna','Czerwinska','2222343222');
-INSERT INTO Sprzedawca VALUES (5,2,'Julia','Stara','2343231344');
+INSERT INTO Sprzedawca(idAdres, imie, nazwisko, nip) VALUES (3,'Zenek','Inny','4673976453');
+INSERT INTO Sprzedawca(idAdres, imie, nazwisko, nip) VALUES (4,'Franek','Znany','3456543425');
+INSERT INTO Sprzedawca(idAdres, imie, nazwisko, nip) VALUES (5,'Bronislawa','Panna','9999999876');
+INSERT INTO Sprzedawca(idAdres, imie, nazwisko, nip) VALUES (1,'Anna','Czerwinska','2222343222');
+INSERT INTO Sprzedawca(idAdres, imie, nazwisko, nip) VALUES (2,'Julia','Stara','2343231344');
 
 
 INSERT INTO Producent VALUES(1,'Activision');
@@ -262,7 +262,7 @@ HAVING g.cena_netto<=100.00
 
 
 SELECT CASE WHEN producent ='Square Enix' OR Wydawca ='Square Enix' THEN 'TAK' ELSE 'NIE' END
- AS "Czy Square-Enix ma coś wspólnego", *
+ AS "Czy Square-Enix ma cos wspolnego", *
 FROM dane_gier;
 
 
@@ -323,12 +323,11 @@ LANGUAGE 'plpgsql';
 SELECT * FROM raport_kupna(2);
 
 
-
 --6) Procedura1
 --Dodawanie klienta
 CREATE FUNCTION dodaj_klienta(integer, text, text, text, text) RETURNS void AS $$
 DECLARE idadres ALIAS FOR $1;
-  imie1 ALIAS FOR $2;
+	imie1 ALIAS FOR $2;
 	nazwisko1 ALIAS FOR $3;
 	nip1 ALIAS FOR $4;
 	pesel1 ALIAS FOR $5;
@@ -356,5 +355,4 @@ END;
 $$ LANGUAGE plpgsql;
 
 SELECT zmiana_zamowienia(3,1);
-
 
