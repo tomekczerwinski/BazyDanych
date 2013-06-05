@@ -324,5 +324,37 @@ SELECT * FROM raport_kupna(2);
 
 
 
+--6) Procedura1
+--Dodawanie klienta
+CREATE FUNCTION dodaj_klienta(integer, text, text, text, text) RETURNS void AS $$
+DECLARE idadres ALIAS FOR $1;
+  imie1 ALIAS FOR $2;
+	nazwisko1 ALIAS FOR $3;
+	nip1 ALIAS FOR $4;
+	pesel1 ALIAS FOR $5;
+BEGIN
+	INSERT INTO Klient(idAdres, imie, nazwisko, NIP, PESEL) VALUES(idadres, imie1, nazwisko1, nip1, pesel1);
+END;
+$$ LANGUAGE plpgsql;
+
+select dodaj_klienta(2, 'Kacper', 'Zamrzycki', '2345323567', '111231222');
+
+
+
+--9) procedura 3
+--Procedura zmiana zamowienia
+--Dlaczego nietrywialne: Zmiana zamówiania umożliwa nam zmienić zamówienie klienta, przykładowo: klient wybrał złą grę - w takim wypadku w wywołaniu podajemu numer klienta (koszyk, idkoszyk) i zmieniamy dla niego idGry.
+
+
+CREATE FUNCTION zmiana_zamowienia(integer, integer) RETURNS void AS $$
+DECLARE idgryy ALIAS FOR $1;
+	idkoszykk ALIAS FOR $2;
+
+BEGIN
+	UPDATE Pozycje SET idGry=idgryy, idKoszyk=idkoszykk WHERE idkoszykk=idKoszyk;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT zmiana_zamowienia(3,1);
 
 
